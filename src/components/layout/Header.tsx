@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Menu from './Menu';
 
 export default function Header() {
   return (
@@ -9,7 +10,7 @@ export default function Header() {
         <Image src="/logo.png" alt="brand" width={32} height={32} />
       </Link>
       {/* Menu */}
-      <div>Menu</div>
+      <Menu />
     </header>
   );
 }

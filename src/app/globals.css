@@ -1,1 +1,8 @@
 @import 'tailwindcss';
+
+/* Used by skeletons: animate-[shimmer_2s_infinite] */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
