@@ -19,3 +19,14 @@ export const registerSchema = z
   });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, { error: 'Email is required' })
+    .pipe(z.email({ error: 'Invalid email address' })),
+  password: z.string().min(1, { error: 'Password is required' })
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;

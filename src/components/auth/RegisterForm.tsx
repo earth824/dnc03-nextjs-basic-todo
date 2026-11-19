@@ -37,7 +37,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterInput) => {
     setFormError(undefined);
-    // On success the server function redirects to /login.
+    // On success the server function redirects to /login?registered=1.
     const result = await registerUser(data);
 
     if (result.fieldErrors) {
