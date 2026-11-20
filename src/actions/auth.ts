@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
-import { createSession } from '@/lib/session';
+import { createSession, deleteSession } from '@/lib/session';
 import {
   loginSchema,
   registerSchema,
@@ -100,4 +100,9 @@ export async function login(input: LoginInput): Promise<LoginState> {
   }
 
   redirect('/dashboard');
+}
+
+export async function logout() {
+  await deleteSession();
+  redirect('/login');
 }

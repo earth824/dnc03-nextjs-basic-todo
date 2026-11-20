@@ -1,48 +1,18 @@
 import 'server-only';
 import { cookies } from 'next/headers';
-import { SignJWT, jwtVerify } from 'jose';
+import {
+  SESSION_COOKIE_NAME,
+  decryptSession,
+  encryptSession
+} from '@/lib/session-token';
 
-const COOKIE_NAME = 'session';
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-export type SessionPayload = {
-  userId: number;
-};
-
-function getKey() {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret) {
-    throw new Error('SESSION_SECRET is not set');
-  }
-  return new TextEncoder().encode(secret);
-}
-
-async function encrypt(payload: SessionPayload, expiresAt: Date) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime(expiresAt)
-    .sign(getKey());
-}
-
-async function decrypt(token: string | undefined) {
-  if (!token) return null;
-  try {
-    const { payload } = await jwtVerify<SessionPayload>(token, getKey(), {
-      algorithms: ['HS256']
-    });
-    return payload;
-  } catch {
-    // Expired or tampered token
-    return null;
-  }
-}
 
 export async function createSession(userId: number) {
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
-  const token = await encrypt({ userId }, expiresAt);
+  const token = await encryptSession({ userId }, expiresAt);
 
-  (await cookies()).set(COOKIE_NAME, token, {
+  (await cookies()).set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -52,10 +22,10 @@ export async function createSession(userId: number) {
 }
 
 export async function getSession() {
-  const token = (await cookies()).get(COOKIE_NAME)?.value;
-  return decrypt(token);
+  const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
+  return decryptSession(token);
 }
 
 export async function deleteSession() {
-  (await cookies()).delete(COOKIE_NAME);
+  (await cookies()).delete(SESSION_COOKIE_NAME);
 }

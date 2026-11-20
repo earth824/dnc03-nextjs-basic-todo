@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import LogoutButton from './LogoutButton';
 import Menu from './Menu';
 
 export default function Header() {
@@ -9,8 +10,12 @@ export default function Header() {
       <Link href="/">
         <Image src="/logo.png" alt="brand" width={32} height={32} />
       </Link>
-      {/* Menu */}
-      <Menu />
+      <div className="flex items-center gap-6">
+        {/* Menu */}
+        <Menu />
+        {/* Logout (rightmost) */}
+        <LogoutButton />
+      </div>
     </header>
   );
 }
